@@ -1,4 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreatePodcastDto } from './create-podcast.dto';
+import { CreatePodcastInputDto } from './create-podcast.dto';
+import { InputType, Field, ObjectType } from '@nestjs/graphql';
 
-export class UpdatePodcastDto extends PartialType(CreatePodcastDto) {}
+@InputType()
+export class UpdatePodcastDto extends PartialType(CreatePodcastInputDto) {}

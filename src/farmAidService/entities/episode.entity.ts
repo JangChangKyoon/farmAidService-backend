@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-@ObjectType()
+@ObjectType() // gql output type 검사
 export class Episode {
   @Field((type) => Number)
   podId: number;

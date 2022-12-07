@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { Podcast } from './entities/podcasts.entity';
 import { CreateEpisodeDto } from './dtos/create-episode.dto';
-import { CreatePodcastDto } from './dtos/create-podcast.dto';
+import { CreatePodcastInputDto } from './dtos/create-podcast.dto';
 import { UpdateEpisodeDto } from './dtos/update-episode.dto';
 import { UpdatePodcastDto } from './dtos/update-podcast.dto';
 import { PodcastsService } from './podcasts.service';
@@ -34,7 +34,7 @@ export class PodcastController {
   }
 
   @Post()
-  create(@Body() podData: CreatePodcastDto) {
+  create(@Body() podData: CreatePodcastInputDto) {
     return this.podcastsService.create(podData);
   }
 

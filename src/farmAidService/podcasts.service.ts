@@ -1,8 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { timeStamp } from 'console';
 import { Podcast } from './entities/podcasts.entity';
 import { CreateEpisodeDto } from './dtos/create-episode.dto';
-import { CreatePodcastDto } from './dtos/create-podcast.dto';
+import { CreatePodcastInputDto } from './dtos/create-podcast.dto';
 import { UpdateEpisodeDto } from './dtos/update-episode.dto';
 import { UpdatePodcastDto } from './dtos/update-podcast.dto';
 import { Episode } from './entities/episode.entity';
@@ -28,7 +27,6 @@ export class PodcastsService {
         },
       ],
     },
-
     {
       id: 2,
       title: 'podcast title Test2',
@@ -67,7 +65,7 @@ export class PodcastsService {
     // After filer, need to save in memory
   }
 
-  create(podData: CreatePodcastDto) {
+  create(podData: CreatePodcastInputDto) {
     this.podcasts.push({
       id: this.podcasts.length + 1,
       ...podData,
