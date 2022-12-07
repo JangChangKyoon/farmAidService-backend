@@ -30,22 +30,22 @@ export class PodcastController {
 
   @Delete(':id')
   delete(@Param('id') id: number) {
-    return this.podcastsService.deleteOne(id);
+    return this.podcastsService.deleteOnePod(id);
   }
 
   @Post()
   create(@Body() podData: CreatePodcastInputDto) {
-    return this.podcastsService.createPod(podData);
+    return this.podcastsService.createOnePod(podData);
   }
 
   @Patch(':id')
   update(@Param('id') id: number, @Body() upData: UpdatePodcastDto) {
-    return this.podcastsService.updatePod(id, upData);
+    return this.podcastsService.updateOnePod(id, upData);
   }
 
   @Post(':id/episodes')
   createEp(@Param('id') id: number, @Body() epData: CreateEpisodeDto) {
-    return this.podcastsService.createEp(id, epData);
+    return this.podcastsService.createOneEp(id, epData);
   }
   @Get(':id/episodes/:epId')
   getEpOne(@Param('id') id: number, @Param('epId') epId: number) {
@@ -59,7 +59,7 @@ export class PodcastController {
 
   @Delete(':id/episodes/:epId')
   deleteEp(@Param('id') id: number, @Param('epId') epId: number) {
-    return this.podcastsService.deleteEp(id, epId);
+    return this.podcastsService.deleteOneEp(id, epId);
   }
   @Patch(':id/episodes/:epId')
   updateEp(
@@ -67,6 +67,6 @@ export class PodcastController {
     @Param('epId') epId: number,
     @Body() upEp: UpdateEpisodeDto,
   ) {
-    return this.podcastsService.updateEp(id, epId, upEp);
+    return this.podcastsService.updateOneEp(id, epId, upEp);
   }
 }
