@@ -1,4 +1,5 @@
 import { IsString, IsNumber, IsOptional } from 'class-validator';
+import { Episode } from '../entities/episode.entity';
 
 export class CreatePodcastDto {
   @IsString()
@@ -8,5 +9,5 @@ export class CreatePodcastDto {
   @IsNumber()
   readonly rating: number;
   @IsOptional()
-  readonly epsodes: Episode[];
+  readonly episodes: Episode[];
 }

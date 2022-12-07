@@ -8,11 +8,11 @@ import { join } from 'path';
 
 @Module({
   imports: [
+    PodcastsModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
     }),
-    PodcastsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
