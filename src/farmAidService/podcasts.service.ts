@@ -59,22 +59,30 @@ export class PodcastsService {
     return podcast;
   }
 
-  deleteOne(id: number) {
+  deleteOnePod(id: number) {
     this.getOnePod(id);
     this.podcasts = this.podcasts.filter((podcast) => podcast.id !== +id);
     // After filer, need to save in memory
   }
 
-  createPod(podData: CreatePodcastInputDto) {
-    this.podcasts.push({
-      id: this.podcasts.length + 1,
-      ...podData,
-    });
+  async createOnePod(
+    podData: CreatePodcastInputDto,
+  ): Promise<{ ok: boolean; error?: string }> {
+    try {
+      await this.podcasts.push({
+        id: this.podcasts.length + 1,
+        ...podData,
+      });
+      console.log('[---------service_createAcount start--------]');
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: 'error' };
+    }
   }
 
-  updatePod(id: number, upData: UpdatePodcastDto) {
+  updateOnePod(id: number, upData: UpdatePodcastDto) {
     const podcast = this.getOnePod(id); // check exist
-    this.deleteOne(id); // filter but update
+    this.deleteOnePod(id); // filter but update
     this.podcasts.push({
       ...podcast,
       ...upData,
@@ -103,7 +111,7 @@ export class PodcastsService {
     return ep;
   }
 
-  createEp(id: number, epDto: CreateEpisodeDto) {
+  createOneEp(id: number, epDto: CreateEpisodeDto) {
     const podcast = this.getOnePod(id);
     podcast.episodes.push({
       epId: podcast.episodes.length + 1,
@@ -112,16 +120,16 @@ export class PodcastsService {
     });
   }
 
-  deleteEp(id: number, epId: number) {
+  deleteOneEp(id: number, epId: number) {
     const podcast = this.getOnePod(id);
     this.getOneEp(id, epId);
     podcast.episodes = podcast.episodes.filter((ep) => ep.epId !== epId);
   }
 
-  updateEp(id: number, epId: number, upEp: UpdateEpisodeDto) {
+  updateOneEp(id: number, epId: number, upEp: UpdateEpisodeDto) {
     const podcast = this.getOnePod(id);
     const ep = this.getOneEp(id, epId);
-    this.deleteEp(id, epId);
+    this.deleteOneEp(id, epId);
     podcast.episodes.push({
       ...ep,
       ...upEp,

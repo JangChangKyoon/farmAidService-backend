@@ -22,5 +22,5 @@ export class CreatePodcastInputDto {
   // readonly episodes?: Episode[];
 }
 
-// @ObjectType() // // gql output type 검사
-// export class createPodCastOutputDto extends CoreOutput {}
+@ObjectType() // // gql output type 검사
+export class CreatePodCastOutputDto extends CoreOutput {}
