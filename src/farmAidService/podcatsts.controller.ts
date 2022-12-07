@@ -20,12 +20,12 @@ export class PodcastController {
 
   @Get()
   getAll(): Podcast[] {
-    return this.podcastsService.getAll();
+    return this.podcastsService.getAllPod();
   }
 
   @Get(':id')
   getOne(@Param('id') id: number) {
-    return this.podcastsService.getOne(id);
+    return this.podcastsService.getOnePod(id);
   }
 
   @Delete(':id')
@@ -35,12 +35,12 @@ export class PodcastController {
 
   @Post()
   create(@Body() podData: CreatePodcastInputDto) {
-    return this.podcastsService.create(podData);
+    return this.podcastsService.createPod(podData);
   }
 
   @Patch(':id')
   update(@Param('id') id: number, @Body() upData: UpdatePodcastDto) {
-    return this.podcastsService.update(id, upData);
+    return this.podcastsService.updatePod(id, upData);
   }
 
   @Post(':id/episodes')
@@ -49,12 +49,12 @@ export class PodcastController {
   }
   @Get(':id/episodes/:epId')
   getEpOne(@Param('id') id: number, @Param('epId') epId: number) {
-    return this.podcastsService.getEpOne(id, epId);
+    return this.podcastsService.getOneEp(id, epId);
   }
 
   @Get('episodes/all')
   getEpAll() {
-    return this.podcastsService.getEpAll();
+    return this.podcastsService.getAllEp();
   }
 
   @Delete(':id/episodes/:epId')

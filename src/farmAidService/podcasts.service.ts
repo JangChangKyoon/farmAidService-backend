@@ -47,11 +47,11 @@ export class PodcastsService {
     },
   ];
 
-  getAll(): Podcast[] {
+  getAllPod(): Podcast[] {
     return this.podcasts;
   }
 
-  getOne(id: number): Podcast {
+  getOnePod(id: number): Podcast {
     const podcast = this.podcasts.find((podcast) => podcast.id === +id);
     if (!podcast) {
       throw new NotFoundException(`Not found ${id}`);
@@ -60,20 +60,20 @@ export class PodcastsService {
   }
 
   deleteOne(id: number) {
-    this.getOne(id);
+    this.getOnePod(id);
     this.podcasts = this.podcasts.filter((podcast) => podcast.id !== +id);
     // After filer, need to save in memory
   }
 
-  create(podData: CreatePodcastInputDto) {
+  createPod(podData: CreatePodcastInputDto) {
     this.podcasts.push({
       id: this.podcasts.length + 1,
       ...podData,
     });
   }
 
-  update(id: number, upData: UpdatePodcastDto) {
-    const podcast = this.getOne(id); // check exist
+  updatePod(id: number, upData: UpdatePodcastDto) {
+    const podcast = this.getOnePod(id); // check exist
     this.deleteOne(id); // filter but update
     this.podcasts.push({
       ...podcast,
@@ -83,7 +83,7 @@ export class PodcastsService {
     // ...updateData : {title, category, rating}
   }
 
-  getEpAll(): Episode[] {
+  getAllEp(): Episode[] {
     let eps = [];
     this.podcasts.forEach((pod) => pod.episodes.forEach((ep) => eps.push(ep)));
     if (eps === undefined) {
@@ -93,7 +93,7 @@ export class PodcastsService {
     return eps;
   }
 
-  getEpOne(id: number, epId: number): Episode {
+  getOneEp(id: number, epId: number): Episode {
     const ep = this.podcasts
       .find((podcast) => podcast.id === id)
       .episodes.find((ep) => ep.epId === epId);
@@ -104,7 +104,7 @@ export class PodcastsService {
   }
 
   createEp(id: number, epDto: CreateEpisodeDto) {
-    const podcast = this.getOne(id);
+    const podcast = this.getOnePod(id);
     podcast.episodes.push({
       epId: podcast.episodes.length + 1,
       ...epDto,
@@ -113,14 +113,14 @@ export class PodcastsService {
   }
 
   deleteEp(id: number, epId: number) {
-    const podcast = this.getOne(id);
-    this.getEpOne(id, epId);
+    const podcast = this.getOnePod(id);
+    this.getOneEp(id, epId);
     podcast.episodes = podcast.episodes.filter((ep) => ep.epId !== epId);
   }
 
   updateEp(id: number, epId: number, upEp: UpdateEpisodeDto) {
-    const podcast = this.getOne(id);
-    const ep = this.getEpOne(id, epId);
+    const podcast = this.getOnePod(id);
+    const ep = this.getOneEp(id, epId);
     this.deleteEp(id, epId);
     podcast.episodes.push({
       ...ep,
