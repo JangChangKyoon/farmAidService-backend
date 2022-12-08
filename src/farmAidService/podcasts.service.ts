@@ -1,10 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Podcast } from './entities/podcasts.entity';
-import { CreateEpisodeDto } from './dtos/create-episode.dto';
+import { CreateEpisodeInputDto } from './dtos/create-episode.dto';
 import { CreatePodcastInputDto } from './dtos/create-podcast.dto';
 import { UpdateEpisodeDto } from './dtos/update-episode.dto';
 import { UpdatePodcastDto } from './dtos/update-podcast.dto';
 import { Episode } from './entities/episode.entity';
+import { SearchOnePodOutputDto } from './dtos/podcast.dto';
 
 @Injectable()
 export class PodcastsService {
@@ -51,12 +52,18 @@ export class PodcastsService {
     return this.podcasts;
   }
 
-  getOnePod(id: number): Podcast {
+  getOnePod(id: number): SearchOnePodOutputDto {
     const podcast = this.podcasts.find((podcast) => podcast.id === +id);
     if (!podcast) {
-      throw new NotFoundException(`Not found ${id}`);
+      return {
+        ok: false,
+        error: `${id} not exist`,
+      };
     }
-    return podcast;
+    return {
+      ok: true,
+      podcast,
+    };
   }
 
   deleteOnePod(id: number) {
@@ -65,23 +72,8 @@ export class PodcastsService {
     // After filer, need to save in memory
   }
 
-  async createOnePod(
-    podData: CreatePodcastInputDto,
-  ): Promise<{ ok: boolean; error?: string }> {
-    try {
-      await this.podcasts.push({
-        id: this.podcasts.length + 1,
-        ...podData,
-      });
-      console.log('[---------service_createAcount start--------]');
-      return { ok: true };
-    } catch (e) {
-      return { ok: false, error: 'error' };
-    }
-  }
-
   updateOnePod(id: number, upData: UpdatePodcastDto) {
-    const podcast = this.getOnePod(id); // check exist
+    const podcast = this.getOnePod(id).podcast; // check exist
     this.deleteOnePod(id); // filter but update
     this.podcasts.push({
       ...podcast,
@@ -91,9 +83,11 @@ export class PodcastsService {
     // ...updateData : {title, category, rating}
   }
 
-  getAllEp(): Episode[] {
+  async getAllEp(): Promise<Episode[]> {
     let eps = [];
-    this.podcasts.forEach((pod) => pod.episodes.forEach((ep) => eps.push(ep)));
+    await this.podcasts.forEach((pod) =>
+      pod.episodes.forEach((ep) => eps.push(ep)),
+    );
     if (eps === undefined) {
       throw new NotFoundException('nothing');
     }
@@ -110,24 +104,45 @@ export class PodcastsService {
     }
     return ep;
   }
-
-  createOneEp(id: number, epDto: CreateEpisodeDto) {
-    const podcast = this.getOnePod(id);
-    podcast.episodes.push({
-      epId: podcast.episodes.length + 1,
-      ...epDto,
-      podId: podcast.id,
-    });
+  async createOnePod(
+    podData: CreatePodcastInputDto,
+  ): Promise<{ ok: boolean; error?: string }> {
+    try {
+      await this.podcasts.push({
+        id: this.podcasts.length + 1,
+        ...podData,
+      });
+      console.log('[---------service_createAcount start--------]');
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: 'error' };
+    }
+  }
+  async createOneEp(
+    id: number,
+    epDto: CreateEpisodeInputDto,
+  ): Promise<{ ok: boolean; error?: string }> {
+    try {
+      const podcast = await this.getOnePod(id).podcast;
+      await podcast.episodes.push({
+        epId: podcast.episodes.length + 1,
+        ...epDto,
+        podId: podcast.id,
+      });
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: 'error' };
+    }
   }
 
   deleteOneEp(id: number, epId: number) {
-    const podcast = this.getOnePod(id);
+    const podcast = this.getOnePod(id).podcast;
     this.getOneEp(id, epId);
     podcast.episodes = podcast.episodes.filter((ep) => ep.epId !== epId);
   }
 
   updateOneEp(id: number, epId: number, upEp: UpdateEpisodeDto) {
-    const podcast = this.getOnePod(id);
+    const podcast = this.getOnePod(id).podcast;
     const ep = this.getOneEp(id, epId);
     this.deleteOneEp(id, epId);
     podcast.episodes.push({

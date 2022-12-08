@@ -8,7 +8,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { Podcast } from './entities/podcasts.entity';
-import { CreateEpisodeDto } from './dtos/create-episode.dto';
+import { CreateEpisodeInputDto } from './dtos/create-episode.dto';
 import { CreatePodcastInputDto } from './dtos/create-podcast.dto';
 import { UpdateEpisodeDto } from './dtos/update-episode.dto';
 import { UpdatePodcastDto } from './dtos/update-podcast.dto';
@@ -44,7 +44,7 @@ export class PodcastController {
   }
 
   @Post(':id/episodes')
-  createEp(@Param('id') id: number, @Body() epData: CreateEpisodeDto) {
+  createEp(@Param('id') id: number, @Body() epData: CreateEpisodeInputDto) {
     return this.podcastsService.createOneEp(id, epData);
   }
   @Get(':id/episodes/:epId')
