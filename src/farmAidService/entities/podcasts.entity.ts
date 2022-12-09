@@ -15,6 +15,6 @@ export class Podcast {
   @Field((type) => Number)
   rating: number;
 
-  @Field((type) => [Episode], { nullable: true })
+  @Field((type) => [Episode], { nullable: 'itemsAndList' })
   episodes?: Episode[];
 }

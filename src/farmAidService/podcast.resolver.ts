@@ -1,4 +1,5 @@
 import { Query, Resolver, Mutation, Args } from '@nestjs/graphql';
+import { CoreOutput } from 'src/common/dtos/output.dto';
 import {
   CreateEpisodeInputDto,
   CreateEpisodeOutputDto,
@@ -8,8 +9,9 @@ import {
   CreatePodCastOutputDto,
 } from './dtos/create-podcast.dto';
 import {
-  SearchOnePodInputDto,
-  SearchOnePodOutputDto,
+  GetAllOutputDto,
+  GetOneInputDto,
+  GetOnePodOutputDto,
 } from './dtos/podcast.dto';
 import { Episode } from './entities/episode.entity';
 import { Podcast } from './entities/podcasts.entity';
@@ -28,11 +30,11 @@ export class PodcastResolver {
   }
 
   //실패...
-  @Query((returns) => SearchOnePodOutputDto)
-  async getOnePodcast(@Args('input') id: SearchOnePodInputDto) {
-    console.log(id.id);
+  @Query((returns) => GetOnePodOutputDto)
+  async getOnePodcast(@Args('id') id: number) {
+    console.log(id);
     // async getOnePodcast(@Args('id', { type: () => Number }) id: number) {
-    await this.podcastService.getOnePod(id.id);
+    await this.podcastService.getOnePod(id);
   }
 
   @Mutation((returns) => CreatePodCastOutputDto)
@@ -55,19 +57,31 @@ export class PodcastResolver {
 
   //실패
   @Mutation((returns) => CreateEpisodeOutputDto)
-  async createEp(@Args('input') epDto: CreateEpisodeInputDto) {
+  async createEp(
+    @Args('id') id: number,
+    @Args('input') epDto: CreateEpisodeInputDto,
+  ) {
+    console.log(epDto);
     console.log(epDto.title);
+    console.log(id);
     try {
-      const { ok, error } = await this.podcastService.createOneEp(1, epDto);
+      const { ok, error } = await this.podcastService.createOneEp(id, epDto);
       return { ok, error };
+      console.log(error);
     } catch (error) {
       return { ok: false, error };
     }
   }
 
-  //실패
-  @Query((returns) => [Episode])
-  getAllEp(): Episode[] {
-    return this.getAllEp();
+  //실패 Maximum call stack size exceeded : 해결 => 서비스에서 로직을 안 찾아오고, resolve의 getAllEp을 가져옸었음
+  //부분 성공 : serviced의 Promise를 넣으면 오류가 나와서 일단 뺌
+  @Query((returns) => CoreOutput)
+  getAllEp(): CoreOutput {
+    try {
+      const { ok, error } = this.podcastService.getAllEp();
+      return { ok, error };
+    } catch (error) {
+      return { ok: false, error };
+    }
   }
 }
