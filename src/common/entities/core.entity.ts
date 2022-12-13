@@ -6,17 +6,16 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@ObjectType()
 export class CoreEntity {
   @PrimaryGeneratedColumn()
-  @Field((type) => String)
+  @Field((type) => Number)
   id: number;
 
   @CreateDateColumn()
-  @Field((type) => String)
+  @Field((type) => Date)
   createAt: Date;
 
   @UpdateDateColumn()
-  @Field((type) => String)
+  @Field((type) => Date)
   updateAt: Date;
 }

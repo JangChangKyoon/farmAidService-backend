@@ -5,7 +5,7 @@ import {
   registerEnumType,
 } from '@nestjs/graphql';
 import { CoreEntity } from 'src/common/entities/core.entity';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 enum UserRole { // DB
   Listener,
@@ -22,7 +22,7 @@ export class User extends CoreEntity {
   @Field((type) => String)
   email: string;
 
-  @Column((type) => String)
+  @Column()
   @Field((type) => String)
   password: string;
 

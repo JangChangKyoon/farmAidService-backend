@@ -11,7 +11,7 @@ import { Podcast } from './podcasts.entity';
 
 @ObjectType() // gql output type 검사
 @Entity()
-export class Episode extends BaseEntity {
+export class Episode {
   @Field((type) => Number, { nullable: true })
   @PrimaryGeneratedColumn()
   epId?: number;

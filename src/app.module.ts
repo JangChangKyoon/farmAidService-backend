@@ -9,6 +9,9 @@ import { UsersModule } from './users/users.module';
 import { CommonModule } from './common/common.module';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
+import { User } from './users/entities/user.entity';
+import { Episode } from './farmAidService/entities/episode.entity';
+import { Podcast } from './farmAidService/entities/podcasts.entity';
 
 @Module({
   imports: [
@@ -27,17 +30,16 @@ import * as Joi from 'joi';
       }),
     }),
     TypeOrmModule.forRoot({
-      // type: 'sqlite',
-      // database: 'db.sqlite',
       type: 'postgres',
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT,
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      logging: true,
-      synchronize: true,
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      synchronize: process.env.NODE_ENV !== 'prod',
+      logging: process.env.NODE_ENV !== 'prod',
+      // entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      entities: [User, Episode, Podcast],
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
@@ -47,7 +49,7 @@ import * as Joi from 'joi';
     UsersModule,
     CommonModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
