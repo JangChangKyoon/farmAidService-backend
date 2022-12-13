@@ -13,6 +13,7 @@ import {
   GetOneInputDto,
   GetOnePodOutputDto,
 } from './dtos/podcast.dto';
+import { UpdatePodcastDto } from './dtos/update-podcast.dto';
 import { Episode } from './entities/episode.entity';
 import { Podcast } from './entities/podcasts.entity';
 import { PodcastsService } from './podcasts.service';
@@ -24,17 +25,14 @@ export class PodcastResolver {
   // readonly :클래스의 맴버변수 값이 최초 선언된 이후에 수정되는 것을 막아준다.
 
   @Query((returns) => [Podcast])
-  getAllPodcast(): Podcast[] {
+  getAllPodcast(): Promise<Podcast[]> {
     const allPodcast = this.podcastService.getAllPod();
     return allPodcast;
   }
 
-  //실패...
-  @Query((returns) => GetOnePodOutputDto)
-  async getOnePodcast(@Args('id') id: number) {
-    console.log(id);
-    // async getOnePodcast(@Args('id', { type: () => Number }) id: number) {
-    await this.podcastService.getOnePod(id);
+  @Query((returns) => Podcast)
+  getOnePod(@Args('id') id: number): Promise<Podcast> {
+    return this.podcastService.findById(id);
   }
 
   @Mutation((returns) => CreatePodCastOutputDto)
@@ -42,10 +40,13 @@ export class PodcastResolver {
     console.log(createPod.category);
     console.log(createPod.rating);
     try {
-      const { ok, error } = await this.podcastService.createOnePod(createPod);
+      const { ok, error, podcast } = await this.podcastService.createOnePod(
+        createPod,
+      );
       return {
         ok,
         error,
+        podcast,
       };
     } catch (error) {
       return {
@@ -55,33 +56,45 @@ export class PodcastResolver {
     }
   }
 
-  //실패
+  @Mutation((returns) => CoreOutput)
+  updatePod(
+    @Args('id') id: number,
+    @Args('input') updatePod: UpdatePodcastDto,
+  ): Promise<CoreOutput> {
+    return this.podcastService.updateOnePod(id, updatePod);
+  }
+
+  @Mutation((returns) => CoreOutput)
+  deletePod(@Args('id') id: number) {
+    this.podcastService.deleteOnePod(id);
+  }
+
   @Mutation((returns) => CreateEpisodeOutputDto)
   async createEp(
     @Args('id') id: number,
-    @Args('input') epDto: CreateEpisodeInputDto,
-  ) {
-    console.log(epDto);
-    console.log(epDto.title);
-    console.log(id);
-    try {
-      const { ok, error } = await this.podcastService.createOneEp(id, epDto);
-      return { ok, error };
-      console.log(error);
-    } catch (error) {
-      return { ok: false, error };
-    }
+    @Args('input') createEp: CreateEpisodeInputDto,
+  ): Promise<CreateEpisodeOutputDto> {
+    const { ok, episode } = await this.podcastService.createOneEp(id, createEp);
+    return { ok, episode };
   }
 
-  //실패 Maximum call stack size exceeded : 해결 => 서비스에서 로직을 안 찾아오고, resolve의 getAllEp을 가져옸었음
-  //부분 성공 : serviced의 Promise를 넣으면 오류가 나와서 일단 뺌
-  @Query((returns) => CoreOutput)
-  getAllEp(): CoreOutput {
-    try {
-      const { ok, error } = this.podcastService.getAllEp();
-      return { ok, error };
-    } catch (error) {
-      return { ok: false, error };
-    }
+  @Query((returns) => Boolean)
+  getOneEp() {
+    return true;
+  }
+
+  @Query((returns) => Boolean)
+  getAllEp() {
+    return true;
+  }
+
+  @Mutation((returns) => Boolean)
+  editEp() {
+    return true;
+  }
+
+  @Mutation((returns) => Boolean)
+  deleteEp() {
+    return true;
   }
 }

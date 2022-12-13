@@ -18,55 +18,55 @@ import { PodcastsService } from './podcasts.service';
 export class PodcastController {
   constructor(private readonly podcastsService: PodcastsService) {}
 
-  @Get()
-  getAll(): Podcast[] {
-    return this.podcastsService.getAllPod();
-  }
+  // @Get()
+  // getAll(): Podcast[] {
+  //   return this.podcastsService.getAllPod();
+  // }
 
-  @Get(':id')
-  getOne(@Param('id') id: number) {
-    return this.podcastsService.getOnePod(id);
-  }
+  // @Get(':id')
+  // getOne(@Param('id') id: number) {
+  //   return this.podcastsService.findById(id);
+  // }
 
-  @Delete(':id')
-  delete(@Param('id') id: number) {
-    return this.podcastsService.deleteOnePod(id);
-  }
+  // @Delete(':id')
+  // delete(@Param('id') id: number) {
+  //   return this.podcastsService.deleteOnePod(id);
+  // }
 
-  @Post()
-  create(@Body() podData: CreatePodcastInputDto) {
-    return this.podcastsService.createOnePod(podData);
-  }
+  // @Post()
+  // create(@Body() podData: CreatePodcastInputDto) {
+  //   return this.podcastsService.createOnePod(podData);
+  // }
 
-  @Patch(':id')
-  update(@Param('id') id: number, @Body() upData: UpdatePodcastDto) {
-    return this.podcastsService.updateOnePod(id, upData);
-  }
+  // @Patch(':id')
+  // update(@Param('id') id: number, @Body() upData: UpdatePodcastDto) {
+  //   return this.podcastsService.updateOnePod(id, upData);
+  // }
 
-  @Post(':id/episodes')
-  createEp(@Param('id') id: number, @Body() epData: CreateEpisodeInputDto) {
-    return this.podcastsService.createOneEp(id, epData);
-  }
-  @Get(':id/episodes/:epId')
-  getEpOne(@Param('id') id: number, @Param('epId') epId: number) {
-    return this.podcastsService.getOneEp(id, epId);
-  }
+  // @Post(':id/episodes')
+  // createEp(@Param('id') id: number, @Body() epData: CreateEpisodeInputDto) {
+  //   return this.podcastsService.createOneEp(id, epData);
+  // }
+  // @Get(':id/episodes/:epId')
+  // getEpOne(@Param('id') id: number, @Param('epId') epId: number) {
+  //   return this.podcastsService.getOneEp(id, epId);
+  // }
 
-  @Get('episodes/all')
-  getEpAll() {
-    return this.podcastsService.getAllEp();
-  }
+  // @Get('episodes/all')
+  // getEpAll() {
+  //   return this.podcastsService.getAllEp();
+  // }
 
-  @Delete(':id/episodes/:epId')
-  deleteEp(@Param('id') id: number, @Param('epId') epId: number) {
-    return this.podcastsService.deleteOneEp(id, epId);
-  }
-  @Patch(':id/episodes/:epId')
-  updateEp(
-    @Param('id') id: number,
-    @Param('epId') epId: number,
-    @Body() upEp: UpdateEpisodeDto,
-  ) {
-    return this.podcastsService.updateOneEp(id, epId, upEp);
-  }
+  // @Delete(':id/episodes/:epId')
+  // deleteEp(@Param('id') id: number, @Param('epId') epId: number) {
+  //   return this.podcastsService.deleteOneEp(id, epId);
+  // }
+  // @Patch(':id/episodes/:epId')
+  // updateEp(
+  //   @Param('id') id: number,
+  //   @Param('epId') epId: number,
+  //   @Body() upEp: UpdateEpisodeDto,
+  // ) {
+  //   return this.podcastsService.updateOneEp(id, epId, upEp);
+  // }
 }
