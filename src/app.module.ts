@@ -38,8 +38,8 @@ import { Podcast } from './farmAidService/entities/podcasts.entity';
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV !== 'prod',
       logging: process.env.NODE_ENV !== 'prod',
-      // entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      entities: [User, Episode, Podcast],
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      // entities: [User, Episode, Podcast],
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
