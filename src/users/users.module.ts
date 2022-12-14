@@ -7,5 +7,6 @@ import { UsersService } from './users.service';
 @Module({
   imports: [TypeOrmModule.forFeature([User])], // dependencies pass entity to service, service to resolver
   providers: [UsersResolver, UsersService], // export logic to app.module
+  exports: [UsersService],
 })
 export class UsersModule {}
