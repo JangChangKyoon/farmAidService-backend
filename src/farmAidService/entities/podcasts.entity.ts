@@ -1,15 +1,7 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { CoreEntity } from 'src/common/entities/core.entity';
 import { User } from 'src/users/entities/user.entity';
-import {
-  Column,
-  Entity,
-  PrimaryGeneratedColumn,
-  BaseEntity,
-  OneToOne,
-  OneToMany,
-  ManyToOne,
-} from 'typeorm';
+import { Column, Entity, ManyToOne } from 'typeorm';
 import { Episode } from './episode.entity';
 
 @InputType('PodcastInputType', { isAbstract: true })
@@ -17,7 +9,7 @@ import { Episode } from './episode.entity';
 @Entity()
 export class Podcast extends CoreEntity {
   @Field((type) => String)
-  @Column()
+  @Column({ unique: true })
   title: string;
 
   @Field((type) => String)
@@ -29,10 +21,14 @@ export class Podcast extends CoreEntity {
   rating: number;
 
   @Field((type) => [Episode], { nullable: 'itemsAndList' })
-  @ManyToOne((type) => Episode, (episode) => episode.podcasts)
+  @ManyToOne((type) => Episode, (episode) => episode.podcasts, {
+    nullable: true,
+  })
   episodes?: Episode[];
 
   @Field((type) => User)
-  @ManyToOne((type) => User, (user) => user.podcasts)
+  @ManyToOne((type) => User, (user) => user.podcasts, {
+    onDelete: 'CASCADE',
+  })
   host: User;
 }

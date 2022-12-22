@@ -1,5 +1,6 @@
 import { Query, Resolver, Mutation, Args } from '@nestjs/graphql';
 import { AuthUser } from 'src/auth/auth-user.decorator';
+import { Role } from 'src/auth/role.decorator';
 import { User } from 'src/users/entities/user.entity';
 import {
   CreatePodcastInput,
@@ -16,6 +17,7 @@ export class PodcastResolver {
   // readonly :클래스의 맴버변수 값이 최초 선언된 이후에 수정되는 것을 막아준다.
 
   @Mutation((returns) => CreatePodCastOutput)
+  @Role(['Owner'])
   async createPodcast(
     @AuthUser() authUser: User,
     @Args('input') createPodcastInput: CreatePodcastInput,

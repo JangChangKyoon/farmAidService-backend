@@ -18,9 +18,9 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { IsEmail, IsEnum } from 'class-validator';
 import { Podcast } from 'src/farmAidService/entities/podcasts.entity';
 
-enum UserRole { // DB
-  Listener,
-  Host,
+export enum UserRole { // DB
+  Listener = 'Listner',
+  Host = 'Host',
 }
 
 registerEnumType(UserRole, { name: 'UserRole' }); //GQL

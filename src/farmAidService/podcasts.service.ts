@@ -33,6 +33,7 @@ export class PodcastsService {
   ): Promise<CreatePodCastOutput> {
     try {
       const newPodcast = this.podcasts.create(createPodcastInput);
+      newPodcast.host = host;
       await this.podcasts.save(newPodcast);
       return {
         ok: true,
