@@ -10,11 +10,13 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { InternalServerErrorException } from '@nestjs/common';
 import { IsEmail, IsEnum } from 'class-validator';
+import { Podcast } from 'src/farmAidService/entities/podcasts.entity';
 
 enum UserRole { // DB
   Listener,
@@ -61,4 +63,8 @@ export class User extends CoreEntity {
       throw new InternalServerErrorException();
     }
   }
+
+  @Field((type) => [Podcast], { nullable: true })
+  @OneToMany((type) => Podcast, (podcast) => podcast.host)
+  podcasts?: Podcast[];
 }

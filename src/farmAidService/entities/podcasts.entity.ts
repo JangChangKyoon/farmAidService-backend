@@ -1,4 +1,6 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { CoreEntity } from 'src/common/entities/core.entity';
+import { User } from 'src/users/entities/user.entity';
 import {
   Column,
   Entity,
@@ -6,16 +8,14 @@ import {
   BaseEntity,
   OneToOne,
   OneToMany,
+  ManyToOne,
 } from 'typeorm';
 import { Episode } from './episode.entity';
 
+@InputType('PodcastInputType', { isAbstract: true })
 @ObjectType() // gql output type 검사
 @Entity()
-export class Podcast {
-  @Field((type) => Number)
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class Podcast extends CoreEntity {
   @Field((type) => String)
   @Column()
   title: string;
@@ -29,6 +29,10 @@ export class Podcast {
   rating: number;
 
   @Field((type) => [Episode], { nullable: 'itemsAndList' })
-  @OneToMany(() => Episode, (ep) => ep.podcast)
+  @ManyToOne((type) => Episode, (episode) => episode.podcasts)
   episodes?: Episode[];
+
+  @Field((type) => User)
+  @ManyToOne((type) => User, (user) => user.podcasts)
+  host: User;
 }
