@@ -13,7 +13,7 @@ const mockRepository = () => ({
 });
 
 const mockJwtService = () => ({
-  sign: jest.fn(),
+  sign: jest.fn(() => 'sign-token-jang'),
   verify: jest.fn(),
 });
 
@@ -24,8 +24,9 @@ describe('UsersService', () => {
   it.todo('createAccount');
 
   let usersRepository: MockRepository<User>;
+  let jwtService: JwtService;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
         UsersService,
@@ -38,6 +39,7 @@ describe('UsersService', () => {
     }).compile();
     service = module.get<UsersService>(UsersService);
     usersRepository = module.get(getRepositoryToken(User));
+    jwtService = module.get<JwtService>(JwtService);
   });
 
   it('Should be defined', () => {
@@ -77,6 +79,51 @@ describe('UsersService', () => {
     it('should fail on exception', async () => {
       usersRepository.findOne.mockRejectedValue(new Error());
       const result = await service.createAccount(createAccountArgs);
+    });
+  });
+
+  describe('login', () => {
+    const loginArgs = {
+      email: 'djang@jang.ok',
+      password: 'jang.password',
+    };
+
+    it('should fail if user does not exist', async () => {
+      usersRepository.findOne.mockResolvedValue(null);
+
+      const result = await service.login(loginArgs);
+
+      expect(usersRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(usersRepository.findOne).toHaveBeenCalledWith({
+        where: expect.any(Object),
+        select: expect.any(Array),
+      });
+    });
+
+    it('should fail if the password is wrong', async () => {
+      const mockedUser = {
+        checkPassword: jest.fn(() => Promise.resolve(false)),
+      };
+
+      usersRepository.findOne.mockResolvedValue(mockedUser);
+
+      const result = await service.login(loginArgs);
+      expect(result).toEqual({ ok: false, error: 'Wrong password' });
+    });
+
+    it('should return token if password correct', async () => {
+      const mockedUser = {
+        id: 1,
+        checkPassword: jest.fn(() => Promise.resolve(true)),
+      };
+
+      usersRepository.findOne.mockResolvedValue(mockedUser);
+
+      const result = await service.login(loginArgs);
+
+      expect(jwtService.sign).toHaveBeenCalledTimes(1);
+      expect(jwtService.sign).toHaveBeenCalledWith(expect.any(Number));
+      expect(result).toEqual({ ok: true, token: 'sign-token-jang' });
     });
   });
 });
