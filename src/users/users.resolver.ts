@@ -11,6 +11,7 @@ import { UsersService } from './users.service';
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import { UserProfileInput, UserProfileOutput } from './dtos/user-profile.dto';
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
+import { Role } from 'src/auth/role.decorator';
 
 @Resolver((of) => User)
 export class UsersResolver {
@@ -52,13 +53,25 @@ export class UsersResolver {
     }
   }
 
+  @Role(['Any'])
   @Query((returns) => User)
-  @UseGuards(AuthGuard)
   me(@AuthUser() authUser: User) {
+    // console.log('hi');
+    // console.log(authUser);
     return authUser;
   }
+  /*
+  User {
+    id: 7,
+    createAt: 2022-12-22T19:21:35.598Z,
+    updateAt: 2022-12-22T19:21:35.598Z,
+    email: 'jachky@korea.kr',
+    password: '$2b$10$Esbny2pUCA0GAO815pML/eLOzX2XBev2sSiFIGbdYOVTqWzfya34W',
+    role: 'Host'
+  }
+  */
 
-  @UseGuards(AuthGuard)
+  @Role(['Any'])
   @Query((returns) => UserProfileOutput)
   async userProfile(
     @Args() userProfileInput: UserProfileInput,
@@ -80,7 +93,7 @@ export class UsersResolver {
     }
   }
 
-  @UseGuards(AuthGuard)
+  @Role(['Any'])
   @Mutation((returns) => EditProfileOutput)
   async editProfile(
     @AuthUser() authUser: User,

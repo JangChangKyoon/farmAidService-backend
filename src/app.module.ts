@@ -61,6 +61,7 @@ import { JwtMiddleware } from './jwt/jwt.middleware';
     }),
     PodcastsModule,
     UsersModule,
+    AuthModule,
     // CommonModule,
   ],
   controllers: [],

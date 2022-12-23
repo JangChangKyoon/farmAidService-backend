@@ -19,13 +19,13 @@ import { IsEmail, IsEnum } from 'class-validator';
 import { Podcast } from 'src/farmAidService/entities/podcasts.entity';
 
 export enum UserRole { // DB
-  Listener = 'Listner',
+  Listener = 'Listener',
   Host = 'Host',
 }
 
 registerEnumType(UserRole, { name: 'UserRole' }); //GQL
 
-@InputType({ isAbstract: true })
+@InputType('UserInputType', { isAbstract: true })
 @ObjectType()
 @Entity()
 export class User extends CoreEntity {
@@ -34,7 +34,7 @@ export class User extends CoreEntity {
   @IsEmail()
   email: string;
 
-  @Column()
+  @Column({ select: false })
   @Field((type) => String)
   password: string;
 
@@ -42,6 +42,10 @@ export class User extends CoreEntity {
   @Field((type) => UserRole)
   @IsEnum(UserRole)
   role: UserRole;
+
+  @Field((type) => [Podcast], { nullable: true })
+  @OneToMany((type) => Podcast, (podcast) => podcast.host)
+  podcasts?: Podcast[];
 
   @BeforeUpdate()
   @BeforeInsert()
@@ -63,8 +67,4 @@ export class User extends CoreEntity {
       throw new InternalServerErrorException();
     }
   }
-
-  @Field((type) => [Podcast], { nullable: true })
-  @OneToMany((type) => Podcast, (podcast) => podcast.host)
-  podcasts?: Podcast[];
 }

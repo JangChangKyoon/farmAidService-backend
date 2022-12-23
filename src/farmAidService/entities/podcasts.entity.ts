@@ -26,9 +26,9 @@ export class Podcast extends CoreEntity {
   })
   episodes?: Episode[];
 
-  @Field((type) => User)
+  @Field((type) => User, { nullable: true })
   @ManyToOne((type) => User, (user) => user.podcasts, {
     onDelete: 'CASCADE',
   })
-  host: User;
+  host?: User;
 }
