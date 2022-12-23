@@ -11,7 +11,7 @@ import { Podcast } from './entities/podcasts.entity';
 import { CreateEpisodeInputDto } from './dtos/create-episode.dto';
 // import { CreatePodcastInputDto } from './dtos/create-podcast.dto';
 import { UpdateEpisodeDto } from './dtos/update-episode.dto';
-import { UpdatePodcastDto } from './dtos/update-podcast.dto';
+import { EditPodcastInput } from './dtos/edit-podcast.dto';
 import { PodcastsService } from './podcasts.service';
 
 @Controller('podcasts')

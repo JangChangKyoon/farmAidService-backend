@@ -6,7 +6,7 @@ import {
 } from './dtos/create-episode.dto';
 // import { CreatePodcastInputDto } from './dtos/create-podcast.dto';
 import { UpdateEpisodeDto } from './dtos/update-episode.dto';
-import { UpdatePodcastDto } from './dtos/update-podcast.dto';
+import { EditPodcastInput, EditPodcastOutput } from './dtos/edit-podcast.dto';
 import { Episode } from './entities/episode.entity';
 import { GetAllOutputDto, GetOnePodOutputDto } from './dtos/podcast.dto';
 import { CoreOutput } from 'src/common/dtos/output.dto';
@@ -42,6 +42,48 @@ export class PodcastsService {
       return {
         ok: false,
         error: 'Could not create podcast',
+      };
+    }
+  }
+
+  async editPodcast(
+    host: User,
+    editPodcastInput: EditPodcastInput,
+  ): Promise<EditPodcastOutput> {
+    try {
+      const podcast = await this.podcasts.findOne({
+        where: { id: editPodcastInput.podcastId },
+      });
+      if (!podcast) {
+        return {
+          ok: false,
+          error: 'Podcast not found',
+        };
+      }
+      if (host.id !== podcast.hostId) {
+        return {
+          ok: false,
+          error: "You can't edit a podcast that you don't host",
+        };
+      }
+      if (editPodcastInput.title) {
+        podcast.title = editPodcastInput.title;
+      }
+      if (editPodcastInput.rating) {
+        podcast.rating = editPodcastInput.rating;
+      }
+      if (editPodcastInput.category) {
+        podcast.category = editPodcastInput.category;
+      }
+
+      await this.podcasts.save(podcast);
+      return {
+        ok: true,
+      };
+    } catch {
+      return {
+        ok: false,
+        error: 'Could not edit Podcast',
       };
     }
   }

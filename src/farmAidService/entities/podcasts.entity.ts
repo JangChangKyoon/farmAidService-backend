@@ -1,7 +1,7 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { CoreEntity } from 'src/common/entities/core.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Column, Entity, ManyToOne } from 'typeorm';
+import { Column, Entity, ManyToOne, RelationId } from 'typeorm';
 import { Episode } from './episode.entity';
 
 @InputType('PodcastInputType', { isAbstract: true })
@@ -31,4 +31,7 @@ export class Podcast extends CoreEntity {
     onDelete: 'CASCADE',
   })
   host?: User;
+
+  @RelationId((podcast: Podcast) => podcast.host)
+  hostId: number;
 }

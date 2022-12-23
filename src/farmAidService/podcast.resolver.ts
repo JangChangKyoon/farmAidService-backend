@@ -6,6 +6,7 @@ import {
   CreatePodcastInput,
   CreatePodCastOutput,
 } from './dtos/create-podcast.dto';
+import { EditPodcastInput, EditPodcastOutput } from './dtos/edit-podcast.dto';
 
 import { Podcast } from './entities/podcasts.entity';
 import { PodcastsService } from './podcasts.service';
@@ -24,6 +25,15 @@ export class PodcastResolver {
   ): Promise<CreatePodCastOutput> {
     // console.log('hi');
     return this.podcastService.createPodcast(authUser, createPodcastInput);
+  }
+
+  @Mutation((returns) => EditPodcastOutput)
+  @Role(['Host'])
+  editPodcast(
+    @AuthUser() host: User,
+    @Args('input') editPodcastInput: EditPodcastInput,
+  ): Promise<EditPodcastOutput> {
+    return this.podcastService.editPodcast(host, editPodcastInput);
   }
 
   // @Query((returns) => [Podcast])
