@@ -17,6 +17,10 @@ import {
   CreatePodcastInput,
   CreatePodCastOutput,
 } from './dtos/create-podcast.dto';
+import {
+  DeletePodcastInput,
+  DeletePodcastOutput,
+} from './dtos/delete-podcast.dto';
 
 @Injectable()
 export class PodcastsService {
@@ -88,102 +92,131 @@ export class PodcastsService {
     }
   }
 
-  // getAllPod(): Promise<Podcast[]> {
-  //   return this.podcasts.find({
-  //     select: {
-  //       title: true,
-  //       category: true,
-  //       rating: true,
-  //       id: true,
-  //     },
-
-  //     relations: {
-  //       episodes: true,
-  //     },
-  //   });
-  // }
-
-  // findById(podId: number): Promise<Podcast> {
-  //   return this.podcasts.findOne({ where: { id: podId } });
-  // }
-
-  // async deleteOnePod(podId: number): Promise<{ ok: boolean; error?: string }> {
-  //   try {
-  //     const podcast = await this.podcasts.findOne({ where: { id: podId } });
-  //     if (podcast) {
-  //       this.podcasts.delete(podId);
-  //     }
-  //     return { ok: true };
-  //   } catch (e) {
-  //     return {
-  //       ok: false,
-  //       error: 'cant delete',
-  //     };
-  //   }
-  // }
-
-  // async updateOnePod(
-  //   id: number,
-  //   upData: UpdatePodcastDto,
-  // ): Promise<CoreOutput> {
-  //   await this.podcasts.update(id, { ...upData });
-  //   return { ok: true };
-  // }
-
-  // async createOnePod({
-  //   title,
-  //   rating,
-  //   category,
-  // }: CreatePodcastInputDto): Promise<{
-  //   ok: boolean;
-  //   error?: string;
-  //   podcast?: Podcast;
-  // }> {
-  //   try {
-  //     // const exist = this.podcasts.findOne({ where: { title } });
-  //     // if (exist) {
-  //     //   return { ok: false, error: 'already exist' };
-  //     // }
-  //     const podcast = await this.podcasts.save(
-  //       this.podcasts.create({ title, rating, category }),
-  //     );
-  //     return { ok: true, podcast };
-  //   } catch (e) {
-  //     return { ok: false, error: `${e}` };
-  //   }
-  // }
-
-  // //실패
-  // async createOneEp(
-  //   podId: number,
-  //   createEp: CreateEpisodeInputDto,
-  // ): Promise<CreateEpisodeOutputDto> {
-  //   const podcast = await this.podcasts.findOne({ where: { id: podId } });
-  //   const episode = new Episode();
-  //   // console.log(podcast);
-  //   // episode.podcast = podcast;
-  //   episode.podcast = podcast;
-  //   episode.title = createEp.title;
-  //   console.log(episode);
-  //   this.episodes.save(episode);
-  //   return { ok: true, episode };
-  // }
-
-  // getOneEp(podId: number, epId: number) {
-  //   return true;
-  // }
-
-  // getAllEp() {
-  //   return true;
-  // }
-
-  // updateEp(podId: number, epId: number, updateEp: UpdateEpisodeDto) {
-  //   return true;
-  // }
-
-  // deleteEp(podId: number, epId: number) {
-  //   return true;
-  // }
-
-  //--------------------------------------------------------------------------
+  async deletePodcastInput(
+    host: User,
+    { podcastId }: DeletePodcastInput,
+  ): Promise<DeletePodcastOutput> {
+    try {
+      const podcast = await this.podcasts.findOne({ where: { id: podcastId } });
+      if (!podcast) {
+        return {
+          ok: false,
+          error: 'Podcast not found',
+        };
+      }
+      if (host.id !== podcast.hostId) {
+        return {
+          ok: false,
+          error: "You can't delete a podcast that you don't host",
+        };
+      }
+      await this.podcasts.delete(podcastId);
+      return {
+        ok: true,
+      };
+    } catch {
+      return {
+        ok: false,
+        error: 'Could not delete podcast',
+      };
+    }
+  }
 }
+// getAllPod(): Promise<Podcast[]> {
+//   return this.podcasts.find({
+//     select: {
+//       title: true,
+//       category: true,
+//       rating: true,
+//       id: true,
+//     },
+
+//     relations: {
+//       episodes: true,
+//     },
+//   });
+// }
+
+// findById(podId: number): Promise<Podcast> {
+//   return this.podcasts.findOne({ where: { id: podId } });
+// }
+
+// async deleteOnePod(podId: number): Promise<{ ok: boolean; error?: string }> {
+//   try {
+//     const podcast = await this.podcasts.findOne({ where: { id: podId } });
+//     if (podcast) {
+//       this.podcasts.delete(podId);
+//     }
+//     return { ok: true };
+//   } catch (e) {
+//     return {
+//       ok: false,
+//       error: 'cant delete',
+//     };
+//   }
+// }
+
+// async updateOnePod(
+//   id: number,
+//   upData: UpdatePodcastDto,
+// ): Promise<CoreOutput> {
+//   await this.podcasts.update(id, { ...upData });
+//   return { ok: true };
+// }
+
+// async createOnePod({
+//   title,
+//   rating,
+//   category,
+// }: CreatePodcastInputDto): Promise<{
+//   ok: boolean;
+//   error?: string;
+//   podcast?: Podcast;
+// }> {
+//   try {
+//     // const exist = this.podcasts.findOne({ where: { title } });
+//     // if (exist) {
+//     //   return { ok: false, error: 'already exist' };
+//     // }
+//     const podcast = await this.podcasts.save(
+//       this.podcasts.create({ title, rating, category }),
+//     );
+//     return { ok: true, podcast };
+//   } catch (e) {
+//     return { ok: false, error: `${e}` };
+//   }
+// }
+
+// //실패
+// async createOneEp(
+//   podId: number,
+//   createEp: CreateEpisodeInputDto,
+// ): Promise<CreateEpisodeOutputDto> {
+//   const podcast = await this.podcasts.findOne({ where: { id: podId } });
+//   const episode = new Episode();
+//   // console.log(podcast);
+//   // episode.podcast = podcast;
+//   episode.podcast = podcast;
+//   episode.title = createEp.title;
+//   console.log(episode);
+//   this.episodes.save(episode);
+//   return { ok: true, episode };
+// }
+
+// getOneEp(podId: number, epId: number) {
+//   return true;
+// }
+
+// getAllEp() {
+//   return true;
+// }
+
+// updateEp(podId: number, epId: number, updateEp: UpdateEpisodeDto) {
+//   return true;
+// }
+
+// deleteEp(podId: number, epId: number) {
+//   return true;
+// }
+
+//--------------------------------------------------------------------------

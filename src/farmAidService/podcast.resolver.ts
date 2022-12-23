@@ -6,6 +6,10 @@ import {
   CreatePodcastInput,
   CreatePodCastOutput,
 } from './dtos/create-podcast.dto';
+import {
+  DeletePodcastInput,
+  DeletePodcastOutput,
+} from './dtos/delete-podcast.dto';
 import { EditPodcastInput, EditPodcastOutput } from './dtos/edit-podcast.dto';
 
 import { Podcast } from './entities/podcasts.entity';
@@ -34,6 +38,15 @@ export class PodcastResolver {
     @Args('input') editPodcastInput: EditPodcastInput,
   ): Promise<EditPodcastOutput> {
     return this.podcastService.editPodcast(host, editPodcastInput);
+  }
+
+  @Mutation((returns) => DeletePodcastOutput)
+  @Role(['Host'])
+  deletePodcast(
+    @AuthUser() host: User,
+    @Args('input') deletePodcastInput: DeletePodcastInput,
+  ): Promise<DeletePodcastOutput> {
+    return this.podcastService.deletePodcastInput(host, deletePodcastInput);
   }
 
   // @Query((returns) => [Podcast])
