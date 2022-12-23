@@ -146,4 +146,50 @@ describe('UsersService', () => {
       expect(result).toEqual({ ok: false, error: 'User Not Found' });
     });
   });
+
+  describe('editProfile', () => {
+    it('should change email', async () => {
+      const oldUser = {
+        email: 'jang@jang.ok',
+      };
+      const editProfileArgs = {
+        userId: { where: { id: 3 } },
+        input: { email: 'djang@djang.ok' },
+      };
+      const newUser = {
+        email: editProfileArgs.input.email,
+      };
+
+      usersRepository.findOne.mockResolvedValue(oldUser);
+
+      await service.editProfile(
+        editProfileArgs.userId.where.id,
+        editProfileArgs.input,
+      );
+
+      expect(usersRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(usersRepository.findOne).toHaveBeenCalledWith(
+        editProfileArgs.userId,
+      );
+      expect(usersRepository.save).toHaveBeenCalledWith(newUser);
+      expect(usersRepository.save).toHaveBeenCalledTimes(1);
+    });
+
+    it('should change password', async () => {
+      const editProfileArgs = {
+        userId: 1,
+        input: { password: 'new.password' },
+      };
+
+      usersRepository.findOne.mockResolvedValue({ password: 'old' });
+      const result = await service.editProfile(
+        editProfileArgs.userId,
+        editProfileArgs.input,
+      );
+
+      expect(usersRepository.save).toHaveBeenCalledTimes(1);
+      expect(usersRepository.save).toHaveBeenCalledWith(editProfileArgs.input);
+      expect(result).toEqual({ ok: true });
+    });
+  });
 });
