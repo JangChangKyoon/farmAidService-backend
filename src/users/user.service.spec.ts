@@ -6,16 +6,16 @@ import { Repository } from 'typeorm';
 import { User, UserRole } from './entities/user.entity';
 import { UsersService } from './users.service';
 
-const mockRepository = {
+const mockRepository = () => ({
   findOne: jest.fn(),
   save: jest.fn(),
   create: jest.fn(),
-};
+});
 
-const mockJwtService = {
+const mockJwtService = () => ({
   sign: jest.fn(),
   verify: jest.fn(),
-};
+});
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 
@@ -29,10 +29,10 @@ describe('UsersService', () => {
     const module = await Test.createTestingModule({
       providers: [
         UsersService,
-        { provide: getRepositoryToken(User), useValue: mockRepository },
+        { provide: getRepositoryToken(User), useValue: mockRepository() },
         {
           provide: JwtService,
-          useValue: mockJwtService,
+          useValue: mockJwtService(),
         },
       ],
     }).compile();
@@ -46,8 +46,8 @@ describe('UsersService', () => {
 
   describe('createAccount', () => {
     const createAccountArgs = {
-      email: '',
-      password: '',
+      email: 'jang@jang.ok',
+      password: 'jang.password',
       role: UserRole.Host,
     };
     it('Should fall if user exists', async () => {
@@ -60,6 +60,23 @@ describe('UsersService', () => {
         ok: false,
         error: 'There is a user with that email already',
       });
+    });
+
+    it('should create a new user', async () => {
+      usersRepository.findOne.mockResolvedValue(undefined);
+      usersRepository.create.mockReturnValue(createAccountArgs);
+
+      await service.createAccount(createAccountArgs);
+
+      expect(usersRepository.create).toHaveBeenCalledTimes(1);
+      expect(usersRepository.create).toHaveBeenCalledWith(createAccountArgs);
+      expect(usersRepository.save).toHaveBeenCalledTimes(1);
+      expect(usersRepository.save).toHaveBeenCalledWith(createAccountArgs);
+    });
+
+    it('should fail on exception', async () => {
+      usersRepository.findOne.mockRejectedValue(new Error());
+      const result = await service.createAccount(createAccountArgs);
     });
   });
 });
