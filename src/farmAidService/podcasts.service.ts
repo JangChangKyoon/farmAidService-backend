@@ -27,16 +27,16 @@ export class PodcastsService {
   constructor(
     @InjectRepository(Podcast)
     private readonly podcasts: Repository<Podcast>,
-    @InjectRepository(Episode)
-    private readonly episodes: Repository<Episode>,
-  ) {}
+  ) // @InjectRepository(Episode)
+  // private readonly episodes: Repository<Episode>,
+  {}
 
   async createPodcast(
     host: User,
-    createPodcastInput: CreatePodcastInput,
+    { title, category, rating }: CreatePodcastInput,
   ): Promise<CreatePodCastOutput> {
     try {
-      const newPodcast = this.podcasts.create(createPodcastInput);
+      const newPodcast = this.podcasts.create({ title, category, rating });
       newPodcast.host = host;
       await this.podcasts.save(newPodcast);
       return {
