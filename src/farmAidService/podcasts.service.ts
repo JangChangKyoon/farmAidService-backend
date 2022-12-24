@@ -26,10 +26,8 @@ import {
 export class PodcastsService {
   constructor(
     @InjectRepository(Podcast)
-    private readonly podcasts: Repository<Podcast>,
-  ) // @InjectRepository(Episode)
-  // private readonly episodes: Repository<Episode>,
-  {}
+    private readonly podcasts: Repository<Podcast>, // @InjectRepository(Episode) // private readonly episodes: Repository<Episode>,
+  ) {}
 
   async createPodcast(
     host: User,
@@ -52,11 +50,11 @@ export class PodcastsService {
 
   async editPodcast(
     host: User,
-    editPodcastInput: EditPodcastInput,
+    { title, category, rating, podcastId }: EditPodcastInput,
   ): Promise<EditPodcastOutput> {
     try {
       const podcast = await this.podcasts.findOne({
-        where: { id: editPodcastInput.podcastId },
+        where: { id: podcastId },
       });
       if (!podcast) {
         return {
@@ -70,14 +68,15 @@ export class PodcastsService {
           error: "You can't edit a podcast that you don't host",
         };
       }
-      if (editPodcastInput.title) {
-        podcast.title = editPodcastInput.title;
+      if (title) {
+        podcast.title = title;
       }
-      if (editPodcastInput.rating) {
-        podcast.rating = editPodcastInput.rating;
+      if (rating) {
+        podcast.rating = rating;
       }
-      if (editPodcastInput.category) {
-        podcast.category = editPodcastInput.category;
+      if (category) {
+        console.log(category);
+        podcast.category = category;
       }
 
       await this.podcasts.save(podcast);
