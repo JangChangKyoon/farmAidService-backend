@@ -75,7 +75,7 @@ export class PodcastsService {
         podcast.rating = rating;
       }
       if (category) {
-        console.log(category);
+        // console.log(category);
         podcast.category = category;
       }
 
@@ -97,12 +97,19 @@ export class PodcastsService {
   ): Promise<DeletePodcastOutput> {
     try {
       const podcast = await this.podcasts.findOne({ where: { id: podcastId } });
+
       if (!podcast) {
         return {
           ok: false,
           error: 'Podcast not found',
         };
       }
+      console.log('podcast');
+      console.log(podcast);
+      console.log('host');
+      console.log(host);
+      console.log('podcastId');
+      console.log(podcastId);
       if (host.id !== podcast.hostId) {
         return {
           ok: false,

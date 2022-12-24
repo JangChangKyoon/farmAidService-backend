@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { async } from 'rxjs';
 import { UserRole } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { Podcast } from './entities/podcasts.entity';
@@ -9,6 +10,7 @@ const mockRepository = () => ({
   findOne: jest.fn(),
   save: jest.fn(),
   create: jest.fn(),
+  delete: jest.fn(),
 });
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
@@ -194,25 +196,29 @@ describe('PodcastService', () => {
       createAt: new Date(),
       updateAt: new Date(),
     };
+
+    it('should fail if podcast not exist', async () => {});
+
     it('sholud be deleted', async () => {
-      const oldPodcast = {
+      const podcastArgs = {
         id: 1,
-        title: 'Indiana Jones',
-        category: 'Adventure',
-        rating: 5,
+        hostId: 1,
+        title: 'hh',
+        category: 'dd',
+        rating: 1,
       };
-      const podcastId = {
-        podcastId: 1,
-      };
+      const podcastIdArgs = { podcastId: 1 };
 
-      podcastsRepository.findOne.mockResolvedValue(oldPodcast);
-      podcastsRepository.findOne.mockResolvedValue(mockedUser.id);
-      //   podcastsRepository.delete.mockReturnValue(1);
+      podcastsRepository.findOne.mockResolvedValue(podcastArgs);
 
-      //   await service.deletePodcastInput(mockedUser, podcastId);
+      const result = await service.deletePodcastInput(
+        mockedUser,
+        podcastIdArgs,
+      );
 
-      //   expect(podcastsRepository.delete).toHaveBeenCalledTimes(1);
-      //   expect(podcastsRepository.delete).toHaveBeenCalledWith(podcastId);
+      expect(result).toEqual({ ok: true });
+      expect(podcastsRepository.delete).toHaveBeenCalledWith(1);
+      expect(podcastsRepository.delete).toHaveBeenCalledTimes(1);
     });
   });
 });
