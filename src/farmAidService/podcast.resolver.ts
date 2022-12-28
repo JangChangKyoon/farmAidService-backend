@@ -3,6 +3,10 @@ import { AuthUser } from 'src/auth/auth-user.decorator';
 import { Role } from 'src/auth/role.decorator';
 import { User, UserRole } from 'src/users/entities/user.entity';
 import {
+  CreateEpisodeInput,
+  CreateEpisodeOutput,
+} from './dtos/create-episode.dto';
+import {
   CreatePodcastInput,
   CreatePodCastOutput,
 } from './dtos/create-podcast.dto';
@@ -11,6 +15,7 @@ import {
   DeletePodcastOutput,
 } from './dtos/delete-podcast.dto';
 import { EditPodcastInput, EditPodcastOutput } from './dtos/edit-podcast.dto';
+import { Episode } from './entities/episode.entity';
 
 import { Podcast } from './entities/podcasts.entity';
 import { PodcastsService } from './podcasts.service';
@@ -48,78 +53,18 @@ export class PodcastResolver {
   ): Promise<DeletePodcastOutput> {
     return this.podcastService.deletePodcastInput(host, deletePodcastInput);
   }
+}
 
-  // @Query((returns) => [Podcast])
-  // getAllPodcast(): Promise<Podcast[]> {
-  //   const allPodcast = this.podcastService.getAllPod();
-  //   return allPodcast;
-  // }
+@Resolver((of) => Episode)
+export class EpisodeResolver {
+  constructor(private readonly podcastService: PodcastsService) {}
 
-  // @Query((returns) => Podcast)
-  // getOnePod(@Args('id') id: number): Promise<Podcast> {
-  //   return this.podcastService.findById(id);
-  // }
-
-  // @Mutation((returns) => CreatePodCastOutputDto)
-  // async createPod(@Args('input') createPod: CreatePodcastInputDto) {
-  //   console.log(createPod.category);
-  //   console.log(createPod.rating);
-  //   try {
-  //     const { ok, error, podcast } = await this.podcastService.createOnePod(
-  //       createPod,
-  //     );
-  //     return {
-  //       ok,
-  //       error,
-  //       podcast,
-  //     };
-  //   } catch (error) {
-  //     return {
-  //       ok: false,
-  //       error,
-  //     };
-  //   }
-  // }
-
-  // @Mutation((returns) => CoreOutput)
-  // updatePod(
-  //   @Args('id') id: number,
-  //   @Args('input') updatePod: UpdatePodcastDto,
-  // ): Promise<CoreOutput> {
-  //   return this.podcastService.updateOnePod(id, updatePod);
-  // }
-
-  // @Mutation((returns) => CoreOutput)
-  // deletePod(@Args('id') id: number) {
-  //   this.podcastService.deleteOnePod(id);
-  // }
-
-  // @Mutation((returns) => CreateEpisodeOutputDto)
-  // async createEp(
-  //   @Args('id') id: number,
-  //   @Args('input') createEp: CreateEpisodeInputDto,
-  // ): Promise<CreateEpisodeOutputDto> {
-  //   const { ok, episode } = await this.podcastService.createOneEp(id, createEp);
-  //   return { ok, episode };
-  // }
-
-  // @Query((returns) => Boolean)
-  // getOneEp() {
-  //   return true;
-  // }
-
-  // @Query((returns) => Boolean)
-  // getAllEp() {
-  //   return true;
-  // }
-
-  // @Mutation((returns) => Boolean)
-  // editEp() {
-  //   return true;
-  // }
-
-  // @Mutation((returns) => Boolean)
-  // deleteEp() {
-  //   return true;
-  // }
+  @Mutation((returns) => CreateEpisodeOutput)
+  @Role(['Host'])
+  async createEpisode(
+    @AuthUser() host: User,
+    @Args('input') createEpisodeInput: CreateEpisodeInput,
+  ): Promise<CreateEpisodeOutput> {
+    return this.podcastService.createEpisode(host, createEpisodeInput);
+  }
 }
