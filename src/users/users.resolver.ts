@@ -33,7 +33,7 @@ export class UsersResolver {
   @Query((returns) => User)
   me(@AuthUser() authUser: User) {
     // console.log('hi');
-    // console.log(authUser);
+    console.log(authUser);
     return authUser;
   }
   /*
