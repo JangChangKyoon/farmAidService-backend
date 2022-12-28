@@ -25,6 +25,7 @@ import {
 } from './dtos/delete-episode.dto';
 import { CategoryRepository } from './repository/category.repository';
 import { Category } from './entities/category.entity';
+import { PodcastsInput, PodcastsOutput } from './dtos/podcasts.dto';
 
 @Injectable()
 export class PodcastsService {
@@ -243,6 +244,26 @@ export class PodcastsService {
       return {
         ok: false,
         error: 'Could not delete episode',
+      };
+    }
+  }
+
+  async allPodcasts({ page }: PodcastsInput): Promise<PodcastsOutput> {
+    try {
+      const [podcasts, totalResults] = await this.podcasts.findAndCount({
+        skip: (page - 1) * 25,
+        take: 25,
+      });
+      return {
+        ok: true,
+        results: podcasts,
+        totalPages: Math.ceil(totalResults / 25),
+        totalResults,
+      };
+    } catch {
+      return {
+        ok: false,
+        error: 'Could not load podcast',
       };
     }
   }
