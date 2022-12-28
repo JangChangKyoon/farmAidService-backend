@@ -11,6 +11,10 @@ import {
   CreatePodCastOutput,
 } from './dtos/create-podcast.dto';
 import {
+  DeleteEpisodeInput,
+  DeleteEpisodeOutput,
+} from './dtos/delete-episode.dto';
+import {
   DeletePodcastInput,
   DeletePodcastOutput,
 } from './dtos/delete-podcast.dto';
@@ -76,5 +80,14 @@ export class EpisodeResolver {
     @Args('input') editEposodeInput: EditEpisodeInput,
   ): Promise<EditEpisodeOutput> {
     return this.podcastService.editEpisode(host, editEposodeInput);
+  }
+
+  @Mutation((returns) => DeleteEpisodeOutput)
+  @Role(['Host'])
+  async deleteEpisode(
+    @AuthUser() host: User,
+    @Args('input') { id }: DeleteEpisodeInput,
+  ): Promise<DeleteEpisodeOutput> {
+    return this.podcastService.deleteEpisode(host, { id });
   }
 }

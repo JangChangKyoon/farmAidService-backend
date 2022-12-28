@@ -21,6 +21,10 @@ import {
   DeletePodcastOutput,
 } from './dtos/delete-podcast.dto';
 import { EditEpisodeInput, EditEpisodeOutput } from './dtos/edit-episode.dto';
+import {
+  DeleteEpisodeInput,
+  DeleteEpisodeOutput,
+} from './dtos/delete-episode.dto';
 
 @Injectable()
 export class PodcastsService {
@@ -200,6 +204,42 @@ export class PodcastsService {
       };
     } catch (error) {
       return { ok: false, error: 'Could not edit episode' };
+    }
+  }
+
+  async deleteEpisode(
+    host: User,
+    { id }: DeleteEpisodeInput,
+  ): Promise<DeleteEpisodeOutput> {
+    try {
+      const episode = await this.episodes.findOne({
+        where: { id: id },
+        relations: { podcast: true },
+      });
+
+      if (!episode) {
+        return {
+          ok: false,
+          error: 'Episode not found',
+        };
+      }
+
+      if (episode.podcast.hostId !== host.id) {
+        return {
+          ok: false,
+          error: "You can't do that",
+        };
+      }
+
+      await this.episodes.delete(id);
+      return {
+        ok: true,
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        error: 'Could not delete episode',
+      };
     }
   }
 }
