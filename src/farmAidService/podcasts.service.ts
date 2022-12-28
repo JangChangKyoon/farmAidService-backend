@@ -7,8 +7,6 @@ import {
 // import { CreatePodcastInputDto } from './dtos/create-podcast.dto';
 import { EditPodcastInput, EditPodcastOutput } from './dtos/edit-podcast.dto';
 import { Episode } from './entities/episode.entity';
-import { GetAllOutputDto, GetOnePodOutputDto } from './dtos/podcast.dto';
-import { CoreOutput } from 'src/common/dtos/output.dto';
 import { InjectRepository } from '@nestjs/typeorm/dist';
 import { Repository } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
