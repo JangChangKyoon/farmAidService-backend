@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { Podcast } from './entities/podcasts.entity';
 // import { CreatePodcastInputDto } from './dtos/create-podcast.dto';
-import { UpdateEpisodeDto } from './dtos/update-episode.dto';
 import { EditPodcastInput } from './dtos/edit-podcast.dto';
 import { PodcastsService } from './podcasts.service';
 

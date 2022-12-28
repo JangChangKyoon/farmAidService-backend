@@ -5,7 +5,6 @@ import {
   CreateEpisodeOutput,
 } from './dtos/create-episode.dto';
 // import { CreatePodcastInputDto } from './dtos/create-podcast.dto';
-import { UpdateEpisodeDto } from './dtos/update-episode.dto';
 import { EditPodcastInput, EditPodcastOutput } from './dtos/edit-podcast.dto';
 import { Episode } from './entities/episode.entity';
 import { GetAllOutputDto, GetOnePodOutputDto } from './dtos/podcast.dto';
@@ -21,6 +20,7 @@ import {
   DeletePodcastInput,
   DeletePodcastOutput,
 } from './dtos/delete-podcast.dto';
+import { EditEpisodeInput, EditEpisodeOutput } from './dtos/edit-episode.dto';
 
 @Injectable()
 export class PodcastsService {
@@ -161,6 +161,45 @@ export class PodcastsService {
         ok: false,
         error: 'Could not create episode',
       };
+    }
+  }
+
+  async editEpisode(
+    host: User,
+    editEposodeInput: EditEpisodeInput,
+  ): Promise<EditEpisodeOutput> {
+    try {
+      const episode = await this.episodes.findOne({
+        where: { id: editEposodeInput.id },
+        relations: { podcast: true },
+      });
+
+      if (!episode) {
+        return {
+          ok: false,
+          error: 'Could not found eposode',
+        };
+      }
+
+      if (episode.podcast.hostId !== host.id) {
+        return {
+          ok: false,
+          error: "You can't do that",
+        };
+      }
+
+      await this.episodes.save([
+        {
+          id: editEposodeInput.id,
+          ...editEposodeInput,
+        },
+      ]);
+
+      return {
+        ok: true,
+      };
+    } catch (error) {
+      return { ok: false, error: 'Could not edit episode' };
     }
   }
 }
