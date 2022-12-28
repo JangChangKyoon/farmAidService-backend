@@ -11,11 +11,10 @@ import { CoreOutput } from 'src/common/dtos/output.dto';
 import { Podcast } from '../entities/podcasts.entity';
 
 @InputType() // gql input type 검사
-export class CreatePodcastInput extends PickType(Podcast, [
-  'title',
-  'category',
-  'rating',
-]) {}
+export class CreatePodcastInput extends PickType(Podcast, ['title', 'rating']) {
+  @Field((type) => String)
+  categoryName: string;
+}
 
 @ObjectType() // // gql output type 검사
 export class CreatePodCastOutput extends CoreOutput {}

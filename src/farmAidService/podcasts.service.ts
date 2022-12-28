@@ -23,6 +23,8 @@ import {
   DeleteEpisodeInput,
   DeleteEpisodeOutput,
 } from './dtos/delete-episode.dto';
+import { CategoryRepository } from './repository/category.repository';
+import { Category } from './entities/category.entity';
 
 @Injectable()
 export class PodcastsService {
@@ -30,15 +32,19 @@ export class PodcastsService {
     @InjectRepository(Podcast)
     private readonly podcasts: Repository<Podcast>,
     @InjectRepository(Episode) private readonly episodes: Repository<Episode>,
+    private readonly categories: CategoryRepository,
   ) {}
 
   async createPodcast(
     host: User,
-    { title, category, rating }: CreatePodcastInput,
+    { title, categoryName, rating }: CreatePodcastInput,
   ): Promise<CreatePodCastOutput> {
     try {
-      const newPodcast = this.podcasts.create({ title, category, rating });
+      const newPodcast = this.podcasts.create({ title, rating });
       newPodcast.host = host;
+
+      const category = await this.categories.getOrCreate(categoryName);
+      newPodcast.category = category;
       await this.podcasts.save(newPodcast);
       return {
         ok: true,
@@ -53,7 +59,7 @@ export class PodcastsService {
 
   async editPodcast(
     host: User,
-    { title, category, rating, podcastId }: EditPodcastInput,
+    { title, categoryName, rating, podcastId }: EditPodcastInput,
   ): Promise<EditPodcastOutput> {
     try {
       const podcast = await this.podcasts.findOne({
@@ -77,9 +83,9 @@ export class PodcastsService {
       if (rating) {
         podcast.rating = rating;
       }
-      if (category) {
-        // console.log(category);
-        podcast.category = category;
+      let category: Category = null;
+      if (categoryName) {
+        category = await this.categories.getOrCreate(categoryName);
       }
 
       await this.podcasts.save(podcast);
