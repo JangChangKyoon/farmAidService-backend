@@ -29,6 +29,7 @@ export class UsersResolver {
     return this.usersService.login(loginInput);
   }
 
+  @UseGuards(AuthGuard)
   @Role(['Any'])
   @Query((returns) => User)
   me(@AuthUser() authUser: User) {
