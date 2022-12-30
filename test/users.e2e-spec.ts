@@ -2,14 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
-import {
-  DataSource,
-  Repository,
-  UsingJoinColumnOnlyOnOneSideAllowedError,
-} from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { send } from 'process';
 
 const GRAPHQL_ENDPOINT = '/graphql';
 const testUser = {
@@ -50,7 +45,7 @@ describe('Usermodule (e2e)', () => {
     await new Promise((resolve) => {
       setTimeout(() => {
         resolve({});
-      }, 10000);
+      }, 25000);
     });
   });
 
@@ -73,7 +68,7 @@ describe('Usermodule (e2e)', () => {
         })
         .expect(200)
         .expect((res) => {
-          console.log(res.body);
+          // console.log(res.body);
           expect(res.body.data.createAccount.ok).toBe(true);
           expect(res.body.data.createAccount.error).toBe(null);
         });
@@ -136,6 +131,7 @@ describe('Usermodule (e2e)', () => {
           jwtToken = login.token;
         });
     });
+
     it('should not be able to login with wrong credentials', () => {
       return request(app.getHttpServer())
         .post(GRAPHQL_ENDPOINT)
@@ -159,7 +155,7 @@ describe('Usermodule (e2e)', () => {
               data: { login },
             },
           } = res;
-          console.log(login);
+          // console.log(login);
           expect(login.ok).toBe(false);
           expect(login.error).toBe('Wrong password');
           expect(login.token).toBe(null);
@@ -277,7 +273,7 @@ describe('Usermodule (e2e)', () => {
 
   describe('editProfile', () => {
     const NEW_EMAIL = 'jang@zang.ok';
-    it('sholud change email', () => {
+    it('should change email', () => {
       return request(app.getHttpServer())
         .post(GRAPHQL_ENDPOINT)
         .set('X-JWT', jwtToken)

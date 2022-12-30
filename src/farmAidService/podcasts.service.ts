@@ -114,12 +114,12 @@ export class PodcastsService {
           error: 'Podcast not found',
         };
       }
-      console.log('podcast');
-      console.log(podcast);
-      console.log('host');
-      console.log(host);
-      console.log('podcastId');
-      console.log(podcastId);
+      // console.log('podcast');
+      // console.log(podcast);
+      // console.log('host');
+      // console.log(host);
+      // console.log('podcastId');
+      // console.log(podcastId);
       if (host.id !== podcast.hostId) {
         return {
           ok: false,

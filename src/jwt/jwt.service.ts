@@ -8,7 +8,7 @@ export class JwtService {
   constructor(
     @Inject(CONFIG_OPTIONS) private readonly options: JwtModuleOption,
   ) {
-    console.log('In JwtService : ' + options);
+    // console.log('In JwtService : ' + options);
   }
 
   sign(userId: number): string {

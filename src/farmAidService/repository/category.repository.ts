@@ -11,7 +11,7 @@ export class CategoryRepository extends Repository<Category> {
   async getOrCreate(name: string): Promise<Category> {
     const categoryName = name.trim().toLowerCase();
     const categorySlug = categoryName.replace(/ /g, '-');
-    console.log('hiReposi');
+    // console.log('hiReposi');
     let category = await this.findOne({ where: { slug: categorySlug } });
 
     if (!category) {

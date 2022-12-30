@@ -83,7 +83,7 @@ export class EpisodeResolver {
 
   @Mutation((returns) => EditPodcastOutput)
   @Role(['Host'])
-  async editEposode(
+  async editEpisode(
     @AuthUser() host: User,
     @Args('input') editEposodeInput: EditEpisodeInput,
   ): Promise<EditEpisodeOutput> {

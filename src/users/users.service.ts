@@ -90,7 +90,7 @@ export class UsersService {
       if (password) {
         user.password = password;
       }
-      console.log(user);
+      // console.log(user);
       await this.users.save(user);
       return {
         ok: true,
