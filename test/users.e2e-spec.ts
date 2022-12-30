@@ -274,4 +274,52 @@ describe('Usermodule (e2e)', () => {
         });
     });
   });
+
+  describe('editProfile', () => {
+    const NEW_EMAIL = 'jang@zang.ok';
+    it('sholud change email', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .set('X-JWT', jwtToken)
+        .send({
+          query: `
+        mutation {
+          editProfile(input:{
+            email:"${NEW_EMAIL}"
+          }){
+            ok
+            error
+          }
+        }`,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            editProfile: { ok, error },
+          } = res.body.data;
+          expect(ok).toBe(true);
+          expect(error).toBe(null);
+        });
+    });
+    it('should have new email', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .set('X-JWT', jwtToken)
+        .send({
+          query: `
+        {
+          me {
+            email
+          }
+        }`,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            me: { email },
+          } = res.body.data;
+          expect(email).toBe(NEW_EMAIL);
+        });
+    });
+  });
 });
