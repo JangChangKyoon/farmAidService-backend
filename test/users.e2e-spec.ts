@@ -4,22 +4,24 @@ import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { DataSource } from 'typeorm';
 
-jest.setTimeout(40000);
 const GRAPHQL_ENDPOINT = '/graphql';
 const testUser = {
   email: 'jang@jang.ok',
   password: '12345',
 };
 
+jest.setTimeout(40000);
+
 describe('Usermodule (e2e)', () => {
   let app: INestApplication;
+  let jwtToken: string;
 
   beforeAll(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
+    const module: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
-    app = moduleFixture.createNestApplication();
+    app = module.createNestApplication();
     await app.init();
   });
 
@@ -89,6 +91,69 @@ describe('Usermodule (e2e)', () => {
             'There is a user with that email already',
           );
           expect(res.body.data.createAccount.error).toEqual(expect.any(String));
+        });
+    });
+  });
+
+  describe('login', () => {
+    it('should login with correct credentials', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .send({
+          query: `
+        mutation {
+          login(input:{
+            email: "${testUser.email}",
+            password:"${testUser.password}",
+          }){
+            ok
+            error
+            token
+          }
+        }
+        `,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: { login },
+            },
+          } = res;
+          // console.log(login);
+          expect(login.ok).toBe(true);
+          expect(login.error).toEqual(null);
+          expect(login.token).toEqual(expect.any(String));
+          jwtToken = login.token;
+        });
+    });
+    it('should not be able to login with wrong credentials', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .send({
+          query: `
+        mutation {
+          login(input:{
+            email:"${testUser.email}",
+            password:"xxx",
+          }){
+            ok
+            error
+            token
+          }
+        }`,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            body: {
+              data: { login },
+            },
+          } = res;
+          console.log(login);
+          expect(login.ok).toBe(false);
+          expect(login.error).toBe('Wrong password');
+          expect(login.token).toBe(null);
         });
     });
   });
