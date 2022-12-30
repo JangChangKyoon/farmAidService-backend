@@ -2,7 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
-import { DataSource } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
+import { User } from 'src/users/entities/user.entity';
+import { getRepositoryToken } from '@nestjs/typeorm';
 
 const GRAPHQL_ENDPOINT = '/graphql';
 const testUser = {
@@ -14,6 +16,7 @@ jest.setTimeout(40000);
 
 describe('Usermodule (e2e)', () => {
   let app: INestApplication;
+  let usersRepository: Repository<User>;
   let jwtToken: string;
 
   beforeAll(async () => {
@@ -22,6 +25,7 @@ describe('Usermodule (e2e)', () => {
     }).compile();
 
     app = module.createNestApplication();
+    usersRepository = module.get<Repository<User>>(getRepositoryToken(User));
     await app.init();
   });
 
@@ -154,6 +158,69 @@ describe('Usermodule (e2e)', () => {
           expect(login.ok).toBe(false);
           expect(login.error).toBe('Wrong password');
           expect(login.token).toBe(null);
+        });
+    });
+  });
+
+  describe('userProfile', () => {
+    let userId: number;
+    let userEmail: string;
+    beforeAll(async () => {
+      const [user] = await usersRepository.find();
+      userId = user.id;
+      userEmail = user.email;
+    });
+    it("should see a user's profile", () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .set('X-JWT', jwtToken)
+        .send({
+          query: `
+      {
+        userProfile(userId:${userId}){
+          ok
+          error
+          user {
+            email
+          }
+        }
+      }`,
+        })
+        .expect(200)
+        .expect((res) => {
+          const {
+            ok,
+            error,
+            user: { email },
+          } = res.body.data.userProfile;
+          expect(ok).toBe(true);
+          expect(error).toBe(null);
+          expect(email).toBe(userEmail);
+        });
+    });
+    it('should not find a profile', () => {
+      return request(app.getHttpServer())
+        .post(GRAPHQL_ENDPOINT)
+        .set('X-JWT', jwtToken)
+        .send({
+          query: `
+        {
+          userProfile(userId:111){
+            ok
+            error
+            user{
+              email
+            }
+          }
+        }
+        `,
+        })
+        .expect(200)
+        .expect((res) => {
+          const { ok, error, user } = res.body.data.userProfile;
+          expect(ok).toBe(false);
+          expect(error).toBe('User Not Found');
+          expect(user).toBe(null);
         });
     });
   });
